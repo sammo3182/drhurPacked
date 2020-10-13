@@ -1,5 +1,5 @@
 ---
-title: "Dr. Hu's R Workshop"
+title: "Learning R with Dr. Hu"
 output: 
   learnr::tutorial:
     progressive: true
@@ -14,26 +14,19 @@ library(lubridate)
 library(gapminder)
 ```
 
-# Lecture: Playing Around w. R
+# Lecture: Data Input/Output
 
 ## Skills
 
-1.  Data creation
-2.  Data input & output
-3.  Data merging & transforming
+1.  Input & output data
+1.  Store data
+1.  Combine data
 
-## Abilities You'll Achieve
+## Data Input
 
-1.  Create the data in the most effective and efficient way!
-2.  Input whatever type of data into R
+### Assignment operator
 
-## Before Anything
-
-R is an OOP (objective-oriented programming), remember?
-
-### Create an object
-
-Object is created by a "name" + `<-...`
+"name" + `<-...`
 
 Naming rules
 
@@ -48,15 +41,18 @@ Naming rules
 # Try to build an illegal object
 ```
 
-### Fun History
+### Another assignment operator
 
--   `=` is not "equals" in R!
--   `=` is (almost) equivalent to `<-` in R (`<<-` also exists)
+=
+
+why `<-` not `=`
 
 <img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/APLkeyBoard.png' width = '60%'>
 
-### Why typing twice?
+### You can, but...
+
 Short key: `Alt + -`
+
 ```{r arrow}
 a <- 12
 25 -> b
@@ -71,7 +67,53 @@ median(x <-  1:10); x
 # median(x = 1:10); x
 ```
 
-## Function
+## Assigning Data to an Object
+
+### Build-in data (existing object)
+
+```{r mtcars, exercise}
+data(mtcars)
+#data(gapminder::gapminder)
+```
+
+### Data R recognizes
+
+- `.RDS` (single object)
+- `.RData` (multiple objects)
+- `.txt` (tab table)
+- `.csv`
+
+```{r input, eval = FALSE}
+df_rds <- readRDS("<FileName>.rds")
+df_txt <- read.table("<FileName>.txt")
+df_csv <- read.csv("<FileName>.csv")
+```
+
+### Data reading through functions
+
+```{r eval=FALSE}
+# SPSS, Stata, SAS
+library(haven)
+df_spss <- read_spss("<FileName>.sav")
+df_stata <- read_dta("<FileName>.dta") 
+df_sas <- read_sas("<FileName>.sas7bdat")  
+
+# Excel sheets
+library(readxl)
+df_excel <- read_excel("<FileName>.xls")
+df_excel2 <- read_excel("<FileName>.xlsx") 
+
+# JavaScript Object Notation 
+library(rjson)
+df_json <- fromJSON(file = "<FileName>.json" )
+
+# XML/Html
+df_xml <- xmlTreeParse("<url>")
+df_html <- readHTMLTable(url, which=3)
+```
+
+
+## A Word of Function
 
 <img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/handShadow.gif' width = '60%'>
 
@@ -83,59 +125,17 @@ handShadow <- light(finger = 3)
 handShadow
 ```
 
-NB: Object can contains everything, no matter data, functions, outcomes, or plots.
 
-## Math
+## Storing Data
 
-```{r math, exercise = TRUE}
-x <- y <- 42
+1. A vector
+1. A matrix
+1. A data.frame
+1. A list
+1. An array
 
-# basic math
-x + (1 - 2) * 3 / 4
 
-# advanced math
-x^2;sqrt(x);log(x);exp(x)
-
-# matrix algebra
-z <- matrix(1:4, ncol = 2)
-z + z - z
-z %*% z  # inner multiplication
-z %o% z  # outter multiplication
-
-# logical evaluation
-x == y; x != y
-x & y; x | y
-x > y; x <= y
-```
-
-See more about linear algebra in R [here](https://towardsdatascience.com/intro-to-r-linear-algebra-2a4de2506c93).
-
-## Let's Create Some Data
-
-Hey, matrix and its friends!
-
-### Matrix
-
-<img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/matrix.gif' width = '60%'>
-
-Creating matrix in R
-
-```{r matrixR}
-A <- matrix(-8:7, ncol = 4)
-A
-A[2, 3]
-```
-
-### Vector
-
-A one-dimension matrix.
-
-```{r vector, exercise = TRUE}
-A[2,]
-A[,3]
-```
-
-Let's know some common types of it
+## Vector
 
 ### Numeric
 
@@ -194,7 +194,7 @@ Learn more about `levels`, `labels`, and more sophisticated manipulations in the
 
 ### Time
 
-`as.POSIXct` vs. `as.POSIXlt`
+`as.POSIXct` (numeric input), `as.POSIXlt` (character input)
 
 ```{r time, exercise}
 Sys.time()
@@ -255,30 +255,21 @@ semester/days(1)
 semester/months(1)
 ```
 
-## Properties of vectors
 
-1.  What type is a given vector?
-2.  How many elements does it have?
-3.  Does it have missing data?
-4.  Is it a character vector?
-5.  How many unique categories of data does it have? How many elements are in each? ......
+## Matrix = Multiple Vectors
 
-```{r property, exercise = TRUE}
-x <- rep(1:5, times = 300)
+<img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/matrix.gif' width = '60%'>
+
+Creating matrix in R
+
+```{r matrixR}
+A <- matrix(-8:7, ncol = 4)
+A
+A[2, 3]
 ```
 
-```{r property-solution}
-class(x)
-length(x)
-is.na(x)
-is.character(x)
-unique(x)
-table(x)
-```
 
-Note: Most of the property function can be used for all types of data in R
-
-## Excel-Like Data
+## Data.frame: Excel-Like Data
 
 "spreadsheet"
 
@@ -286,61 +277,38 @@ In Excel:
 
 <img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/excel-r1.png' width = '60%'>
 
-In R(studio):
+In R: 
+
+```{r dataframe}
+df_toy <- data.frame(female = c(0,1,1,0),
+           age = c(29, 39, 38, 12),
+           name = c("Iron Man", "Black Widow", "Captain Marvel", "Captain America"))
+
+df_toy
+```
+
+In Rstudio:
 
 <img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/excel-r2.png' width = '60%'>
 
-## Data Input
+## List and Array: Chains of Datas
 
-### Build-in data
+```{r list}
+ls_monks <- list(name = c("Wukong Sun", "Sanzang Tang", "Wuneng Zhu", "Wujing Sha"), 
+                   power = c(100, 20, 90, 40),
+                   buddha = c(TRUE, TRUE, FALSE, FALSE))
 
-```{r mtcars, exercise}
-data(mtcars)
-#data(gapminder::gapminder)
+ls_monks
 ```
 
-### R Data
+```{r array}
+# Create two vectors of different lengths.
+vector1 <- c(5,9,3)
+vector2 <- c(10,11,12,13,14,15)
 
--   `.RDS` (single object)
--   `.RData` (multiple objects)
--   `.txt` (tab table)
--   `.csv`
-
-```{r input, eval = FALSE}
-df_rds <- readRDS("<FileName>.rds")
-df_txt <- read.table("<FileName>.txt")
-df_csv <- read.csv("<FileName>.csv")
-```
-
-```{r eval=FALSE}
-# SPSS, Stata, SAS
-library(haven)
-df_spss <- read_spss("<FileName>.sav")
-df_stata <- read_dta("<FileName>.dta") 
-df_sas <- read_sas("<FileName>.sas7bdat")  
-
-# Excel sheets
-library(readxl)
-df_excel <- read_excel("<FileName>.xls")
-df_excel2 <- read_excel("<FileName>.xlsx") 
-
-# JavaScript Object Notation 
-library(rjson)
-df_json <- fromJSON(file = "<FileName>.json" )
-
-# XML/Html
-df_xml <- xmlTreeParse("<url>")
-df_html <- readHTMLTable(url, which=3)
-
-# Feather
-feather::read_feather("<FileName>.feather")
-```
-
-### If the data hasn't existed
-
-```{r newData, exercise = TRUE}
-df_new <- data.frame(x = 1:3, y = c("x", "y", "z"))
-df_new
+# Take these vectors as input to the array.
+result <- array(c(vector1,vector2),dim = c(3,3,2))
+result
 ```
 
 ## Combining Data
@@ -361,8 +329,8 @@ gapminder
 Q: Assuming we have two separate data for Asia and Europe (how?), how could we combine them into one?
 
 ```{r ex_append, exercise = TRUE, exercise.eval = TRUE}
-gapminder_asia <- gapminder[gapminder$continent == "Asia", ]
-gapminder_europe <- gapminder[gapminder$continent == "Europe", ]
+gapminder_asia <- gapminder[gapminder$continent == "Asia", 1:2]
+gapminder_europe <- gapminder[gapminder$continent == "Europe", 1:2]
 ```
 
 ```{r ex_append-solution}
@@ -401,31 +369,6 @@ gapminder_year <- select(gapminder, year, pop)
 gapminder_countryYear<- left_join(gapminder_country, gapminder_year)
 ```
 
-## Long-Wide Transformation
-
--   To long: Transfer columns to values of a variable
--   To wide: Convert values of a rows to columns
-
-```{r pivot}
-library(tidyr)
-
-relig_income # wide
-fish_encounters # long
-```
-
-### To longer
-
-```{r pivotLonger, exercise = TRUE}
-relig_income %>%
- pivot_longer(-religion, names_to = "income", values_to = "count")
-```
-
-### To wider
-
-```{r pivotWider, exercise = TRUE}
-fish_encounters %>%
-  pivot_wider(names_from = station, values_from = seen)
-```
 
 ## Data Output
 
@@ -436,11 +379,6 @@ saveRDS(gapminder_country, file = "gapminder_country.rds")
 save(gapminder_country, gapminder_year, file = "gapminder.rdata")
 ```
 
-### Save as Python readable data
-
-```{r savingPythong, eval = FALSE}
-feather::write_feather(gapminder, path = "gapminder.feather")
-```
 
 ### Save as csv
 
@@ -475,17 +413,49 @@ STATA (.dta, \<14): 3.16 G = R (.rds): 0.05 G
 
 : Average Write Times (and File Size) for GSS Data in R
 
+## Bonus: Math
+
+```{r math, exercise = TRUE}
+x <- y <- 42
+
+# basic math
+x + (1 - 2) * 3 / 4
+
+# advanced math
+x^2;sqrt(x);log(x);exp(x)
+
+# matrix algebra
+z <- matrix(1:4, ncol = 2)
+z + z - z
+z %*% z  # inner multiplication
+z %o% z  # outter multiplication
+
+# logical evaluation
+x == y; x != y
+x & y; x | y
+x > y; x <= y
+```
+
+See more about linear algebra in R [here](https://towardsdatascience.com/intro-to-r-linear-algebra-2a4de2506c93).
+
 ## Take-Home Points
 
-1.  Keep in mind that R is an **OOP**.
-2.  Think data as matrices.
-3.  Choose the vector type wisely and don't hesitate to change them.
-4.  Columns are variables, and rows are observations ("tidy data").
+1. Input
+    + `readTYPE`
+    + `read_type`
+    + `read.type`
+1. Store
+    + Vector
+    + Matrix/data.frame
+    + List, array
+1. Output
+    + `save`
+    + `saveTYPE`
 
 ## Thank you!
 
-<i class="fa fa-envelope fa-lg"></i>  <yuehu@tsinghua.edu.cn>
+<i class="fa fa-envelope fa-lg"></i> <yuehu@tsinghua.edu.cn>
 
-<i class="fa fa-globe fa-lg"></i>  <https://sammo3182.github.io/>
+<i class="fa fa-globe fa-lg"></i> <https://sammo3182.github.io/>
 
-<i class="fab fa-github fa-lg"></i>  [sammo3182](https://github.com/sammo3182)
+<i class="fab fa-github fa-lg"></i> [sammo3182](https://github.com/sammo3182)
