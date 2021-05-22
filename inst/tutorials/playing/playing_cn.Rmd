@@ -1,0 +1,459 @@
+---
+标题: "Dr.Hu的R语言研习会"
+输出:
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+运行时间: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(tidyverse)
+library(lubridate)
+library(gapminder)
+```
+
+# 课程: 数据输入／输出
+
+## 技能
+
+1.  输入／输出数据
+1.  保存数据
+1.  合并数据
+
+## 数据输入
+
+### 赋值运算符
+
+"名称" + `<-...`
+
+命名规则
+
+1.  不要以数字开头 (错误: `1stday`)
+2.  除了 `.` 和 `-`以外没有其他特殊符号(错误: `M&M`)
+3.  区分大小写 (`X != x`)
+4.  如需必要请勿重写内置函数 (避免: `list <- c(1:5)`)
+
+```{r obejctEg, exercise = TRUE}
+# 创建一个合法的对象
+
+# 试着创建一个不合法的对象
+```
+
+### 另一个赋值运算符
+
+=
+
+为什么是 `<-` 而不是 `=`
+
+<img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/APLkeyBoard.png' width = '60%'>
+
+### 你可以，但是...
+
+快捷键: `Alt + -`
+
+```{r arrow}
+a <- 12
+25 -> b
+```
+
+### 什么时候用 "="?
+当你不想创建一个对象的时候
+
+```{r sideEffect, exercise = TRUE}
+median(x <-  1:10); x
+# median(x = 1:10); x
+```
+
+## 给一个对象分配数据
+
+### 内置数据 (已存在的对象)
+
+```{r mtcars, exercise}
+data(mtcars)
+#data(gapminder::gapminder)
+```
+
+### R数据读取
+
+- `.RDS` (单一对象)
+- `.RData` (多个对象)
+- `.txt` (展示板)
+- `.csv`
+
+```{r input, eval = FALSE}
+df_rds <- readRDS("<FileName>.rds")
+df_txt <- read.table("<FileName>.txt")
+df_csv <- read.csv("<FileName>.csv")
+```
+
+### 通过函数读取数据
+
+```{r eval=FALSE}
+# SPSS, Stata, SAS
+library(haven)
+df_spss <- read_spss("<FileName>.sav")
+df_stata <- read_dta("<FileName>.dta")
+df_sas <- read_sas("<FileName>.sas7bdat")  
+
+# Excel表格
+library(readxl)
+df_excel <- read_excel("<FileName>.xls")
+df_excel2 <- read_excel("<FileName>.xlsx")
+
+# JSON (JavaScript Object Notation)
+library(rjson)
+df_json <- fromJSON(file = "<FileName>.json" )
+
+# XML/Html
+df_xml <- xmlTreeParse("<url>")
+df_html <- readHTMLTable(url, which=3)
+```
+
+
+## 一句函数
+
+<img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/handShadow.gif' width = '60%'>
+
+```{r funIllustration, eval = FALSE}
+light <- function(finger){
+  {{shadow <- finger + 5}}
+}
+handShadow <- light(finger = 3)
+handShadow
+```
+
+
+## 数据分类
+
+1. 一个向量
+1. 一个矩阵
+1. 一个数据帧(DataFrame)
+1. 一个列表
+1. 一个数组
+
+
+## 向量
+
+### 数字化的
+
+```{r numeric, exercise = TRUE}
+c(1, 2, 3);c(1:3) # 整数
+c(1.5, -2.34, NA) #两倍
+
+# c(1.5:3) 的结果是什么?
+```
+
+注意: 1. `NA`表示的是: not available
+
+### 字母
+
+```{r character, exercise = TRUE}
+c("R is hard.", "But I can nail it.")
+```
+
+### 逻辑
+
+```{r logic, exercise = TRUE}
+c(TRUE, TRUE, FALSE)
+
+# c(TRUE, TRUE, FALSE) == c(1, 1, 0)
+```
+
+### 向量
+
+```{r factor, exercise = TRUE}
+factor(c(1, 2, 2, 3), labels = c("Apple", "Pear", "Orange"))
+
+# x == c(1, 2, 2, 3)?
+```
+
+```{r factor-solution}
+x <- factor(c(1, 2, 2, 3), labels = c("Apple", "Pear", "Orange"))
+levels(x)
+```
+
+### 水平(Levels)和标签(Lables)?
+
+```{r level, exercise = TRUE}
+x <- factor(c(1, 2, 2, 3), labels = c("Apple", "Pear", "Orange"))
+levels(x)
+```
+
+```{r level-solution}
+# 水平变化
+
+x2 <- x
+levels(x2) <- c("Pear", "Orange", "Apple")
+levels(x2)
+```
+
+了解更多关于`levels`, `labels`, 以及`?factor`和[vignette](https://forcats.tidyverse.org/) of the package `forcats`里的其他更复杂的数据处理方式
+
+### 时间
+
+`as.POSIXct` (numeric input), `as.POSIXlt` (character input)
+
+```{r time, exercise}
+Sys.time()
+
+# The full pack
+time1 <- Sys.time()
+time2 <- as.POSIXlt(Sys.time())
+time2$wday # week of the day
+
+## 如果我只在乎数据呢？
+```
+
+```{r time-solution}
+Sys.Date()
+date1 <- as.Date("2019-01-02")
+```
+
+## 时间处理包 `lubridate`一览
+
+### 不同格式的数据
+
+```{r timeRecord}
+library(lubridate)
+
+ymd("20110604")
+mdy("06-04-2011")
+dmy("04/06/2011")
+```
+
+### 时区
+
+```{r timeZone, exercise = TRUE}
+time1 <- Sys.time()
+Sys.timezone()
+
+with_tz(time1, tzone = "America/Chicago")
+
+# 通过 `OlsonNames()学习时区名`
+
+time2 <- force_tz(time1, tzone = "America/Chicago")
+```
+
+### 间隔
+
+```{r intervals, exercise = TRUE}
+start <- ymd("2019-09-09")
+end <- start + weeks(15)
+
+semester <- interval(start, end)
+
+# 一个学期有多少天?
+semester/days(1)
+
+# 有多少个月呢?
+```
+
+```{r intervals-solution}
+semester/months(1)
+```
+
+
+## 矩阵 = 多重向量
+
+<img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/matrix.gif' width = '60%'>
+
+在R中创建矩阵
+
+```{r matrixR}
+A <- matrix(-8:7, ncol = 4)
+A
+A[2, 3]
+```
+
+
+## Data.frame: Excel类的数据
+
+"电子表格"
+
+在Excel中:
+
+<img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/excel-r1.png' width = '60%'>
+
+在R中:
+
+```{r dataframe}
+df_toy <- data.frame(female = c(0,1,1,0),
+           age = c(29, 39, 38, 12),
+           name = c("Iron Man", "Black Widow", "Captain Marvel", "Captain America"))
+
+df_toy
+```
+
+在Rstudio中:
+
+<img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/excel-r2.png' width = '60%'>
+
+## 列表和数组: 数据链
+
+```{r list}
+ls_monks <- list(name = c("Wukong Sun", "Sanzang Tang", "Wuneng Zhu", "Wujing Sha"),
+                   power = c(100, 20, 90, 40),
+                   buddha = c(TRUE, TRUE, FALSE, FALSE))
+
+ls_monks
+```
+
+```{r array}
+# 创建两个长度不同的向量。
+向量1 <- c(5,9,3)
+向量2 <- c(10,11,12,13,14,15)
+
+# 把这些向量输入到数组中。
+结果 <- array(c(vector1,vector2),dim = c(3,3,2))
+result
+```
+
+## 合并数据
+
+### 示例数据
+
+由[Hans Rosling的 TED 演讲](https://www.ted.com/talks/hans_rosling_shows_the_best_stats_you_ve_ever_seen?utm_campaign=tedspread--b&utm_medium=referral&utm_source=tedcomshare)普及的人口数据。
+
+```{r toy, exercise = TRUE}
+library(gapminder)
+gapminder
+```
+
+### 合并行
+
+<img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/rowBind.png' width = '95%'>
+
+问: 假设我们分别有两个数据，亚洲和欧洲（如何有？），我们如何把它们合并成一个数据呢？
+
+```{r ex_append, exercise = TRUE, exercise.eval = TRUE}
+gapminder_asia <- gapminder[gapminder$continent s "Asia", 1:2]
+gapminder_europe <- gapminder[gapminder$continent == "Europe", 1:2]
+```
+
+```{r ex_append-solution}
+library(dplyr)
+
+gapminder_eurasia <- bind_rows(gapminder_asia, gapminder_europe)
+```
+
+### 合并列
+
+问: 我有一些列，并想把它们合并在一起。
+
+<img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/columnBind.png' width = '95%'>
+
+```{r ex_columnBind, exercise = TRUE}
+gapminder_country <- gapminder$country
+gapminder_year <- gapminder$year
+```
+
+```{r ex_columnBind-solution}
+bind_cols(gapminder_country, gapminder_year)
+```
+
+### 基于索引的合并
+
+问: 我该怎样把两个数据集合并在一起？
+
+<img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/join.png' width = '95%'>
+
+```{r ex_join, exercise = TRUE}
+gapminder_country <- select(gapminder, country, year)
+gapminder_year <- select(gapminder, year, pop)
+```
+
+```{r ex_join-solution}
+gapminder_countryYear<- left_join(gapminder_country, gapminder_year)
+```
+
+
+## 数据输出
+
+### 储存为R数据
+
+```{r saving, eval = FALSE}
+saveRDS(gapminder_country, file = "gapminder_country.rds")
+save(gapminder_country, gapminder_year, file = "gapminder.rdata")
+```
+
+
+### 储存为csv文件
+
+```{r savingCSV, eval = FALSE}
+write.csv(gapminder_country, file = "gapminder_country.csv")
+```
+
+提示: 如果你的数据是中文，不要用Excel打开csv文件。
+当然了，你可以把数据以STATA, SPSS, Excel格式存储下来, 但是...
+
+### 体面地储存数据
+
+STATA (.dta, \<14): 3.16 G = R (.rds): 0.05 G
+
+####
+
+| **Method**       | **Average Time** | **Minimum** | **Maximum** |
+|:-----------------|:----------------:|:-----------:|:-----------:|
+| base::readRDS    |       19.65      |    18.64    |    21.01    |
+| fst::read\_fst   |       1.39       |     0.56    |     3.41    |
+| haven::read\_sav |      104.78      |    101.00   |    111.85   |
+| qs::qread        |       3.33       |     3.00    |     4.24    |
+
+: 四种在R中读取GSS数据的方式所用的平均时间（以秒计）
+
+| **Method**      | **Average Time** | **Minimum** | **Maximum** | **File Size** |
+|:----------------|:----------------:|:-----------:|:-----------:|:-------------:|
+| base::saveRDS   |       98.36      |    93.09    |    103.24   |    30.9 MB    |
+| fst::write\_fst |       2.70       |     1.86    |     4.05    |    122.1 MB   |
+| qs::qsave       |       5.03       |     4.35    |     6.62    |    44.6 MB    |
+
+: 在R中写入GSS数据（及文件大小）所用的平均时间
+
+## 额外奖励: 数学
+
+```{r math, exercise = TRUE}
+x <- y <- 42
+
+# 基础数学
+x + (1 - 2) * 3 / 4
+
+# 高等数学
+x^2;sqrt(x);log(x);exp(x)
+
+# 矩阵运算
+z <- matrix(1:4, ncol = 2)
+z + z - z
+z %*% z  # inner multiplication
+z %o% z  # outter multiplication
+
+# 布尔逻辑计算
+x == y; x != y
+x & y; x | y
+x > y; x <= y
+```
+
+在[这里](https://towardsdatascience.com/intro-to-r-linear-algebra-2a4de2506c93)查看更多线性代数在 R 中的应用。
+
+## 课后思考
+
+1. 输入
+    + `readTYPE`
+    + `read_type`
+    + `read.type`
+1. 保存
+    + 向量
+    + 矩阵/data.frame
+    + 列表, 数组
+1. 输出
+    + `save`
+    + `saveTYPE`
+
+## 谢谢!
+
+<i class="fa fa-envelope fa-lg"></i> <yuehu@tsinghua.edu.cn>
+
+<i class="fa fa-globe fa-lg"></i> <https://sammo3182.github.io/>
+
+<i class="fab fa-github fa-lg"></i> [sammo3182](https://github.com/sammo3182)
