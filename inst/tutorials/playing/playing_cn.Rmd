@@ -8,10 +8,10 @@
 ---
 
 ```{r setup, include=FALSE}
-library(learnr)
+#library(learnr)
 library(tidyverse)
-library(lubridate)
-library(gapminder)
+library(lubridate) #时间数据处理
+library(gapminder) 
 ```
 
 # 课程: 数据输入／输出
@@ -19,26 +19,27 @@ library(gapminder)
 ## 技能
 
 1.  输入／输出数据
-1.  保存数据
-1.  合并数据
+2.  保存数据
+3.  合并数据
 
 ## 数据输入
 
 ### 赋值运算符
 
-"名称" + `<-...`
+"名称" + `<-...` 
 
 命名规则
 
 1.  不要以数字开头 (错误: `1stday`)
 2.  除了 `.` 和 `-`以外没有其他特殊符号(错误: `M&M`)
-3.  区分大小写 (`X != x`)
+3.  区分大小写 (`X != x`) `!表示“非”/“否”，`!=`表示“不等于”
 4.  如需必要请勿重写内置函数 (避免: `list <- c(1:5)`)
 
 ```{r obejctEg, exercise = TRUE}
 # 创建一个合法的对象
 
 # 试着创建一个不合法的对象
+
 ```
 
 ### 另一个赋值运算符
@@ -51,7 +52,9 @@ library(gapminder)
 
 ### 你可以，但是...
 
-快捷键: `Alt + -`
+`<-`快捷键:
+windows: `Alt + -` 
+mac: `option + -`
 
 ```{r arrow}
 a <- 12
@@ -81,6 +84,7 @@ data(mtcars)
 - `.RData` (多个对象)
 - `.txt` (展示板)
 - `.csv`
+RDS是用saveRDS和readRDS，Rdata使用save和load,txt是用read.table，csv是用read.csv
 
 ```{r input, eval = FALSE}
 df_rds <- readRDS("<FileName>.rds")
@@ -88,7 +92,7 @@ df_txt <- read.table("<FileName>.txt")
 df_csv <- read.csv("<FileName>.csv")
 ```
 
-### 通过函数读取数据
+### 读取数据
 
 ```{r eval=FALSE}
 # SPSS, Stata, SAS
@@ -96,6 +100,11 @@ library(haven)
 df_spss <- read_spss("<FileName>.sav")
 df_stata <- read_dta("<FileName>.dta")
 df_sas <- read_sas("<FileName>.sas7bdat")  
+
+# 表格的快速导入
+library（reader）
+df_csv <- read.csv("<FileName>.csv")
+df_table <- read.table("<FileName>.csv/txt")
 
 # Excel表格
 library(readxl)
@@ -127,25 +136,29 @@ handShadow
 
 ## 数据分类
 
-1. 一个向量
-1. 一个矩阵
-1. 一个数据帧(DataFrame)
-1. 一个列表
-1. 一个数组
+1. 向量
+2. 矩阵
+3. 数据帧(DataFrame)
+4. 列表
+5. 数组
 
 
 ## 向量
+向量（vector）是R语言中最基本的数据类型，执行组合功能的函数`c()`可用来创建向量
 
 ### 数字化的
 
 ```{r numeric, exercise = TRUE}
-c(1, 2, 3);c(1:3) # 整数
-c(1.5, -2.34, NA) #两倍
+c(1, 2, 3) #整数
+c(1:5) #表示1-5 
+c(1.5, -2.34, NA)
 
 # c(1.5:3) 的结果是什么?
+
 ```
 
 注意: 1. `NA`表示的是: not available
+      2. 单个向量中的数据必须拥有相同的类型（数值型、字符型或逻辑型）
 
 ### 字母
 
@@ -191,12 +204,93 @@ levels(x2)
 
 了解更多关于`levels`, `labels`, 以及`?factor`和[vignette](https://forcats.tidyverse.org/) of the package `forcats`里的其他更复杂的数据处理方式
 
-### 时间
+## 矩阵 = 多重向量
+矩阵（matrice）是具有维度属性的向量，矩阵都是二维的，和向量类似，矩阵中也仅能包含一种数据类型
+
+<img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/matrix.gif' width = '60%'>
+
+主要有三种创建矩阵的方法：
+
+1.直接创建:`matrix`
+```{r matrixR}
+A <- matrix(1:20, ncol = 4) #创建一个数字1-20，5行4列的矩阵（col为列，row为行）
+A
+A[2, 3]
+```
+
+2.矢量+维度向量:`dim()`
+```{r}
+M <- c(1:20)
+dim(M) <- c(4,5) #4行5列       
+M
+```
+
+3.绑定行或列来创建矩阵:`cbind()`和`rbind()`
+```{r}
+x <- 1:4
+y <- 5:8
+cbind (x, y)
+rbind (x, y)
+```
+
+
+## 数组
+数组（array）与矩阵类似，但是维度可以大于2。数组可通过array函数创建
+```{r array}
+# 创建两个长度不同的向量。
+vector1 <- c(5,9,3)
+vector2 <- c(10,11,12,13,14,15)
+
+# 把这些向量输入到数组中。
+result <- array(c(vector1,vector2),dim = c(3,3,2))
+result
+```
+
+## 列表
+列表（list）是一种可包含多种不同类型对象的向量，是一些对象（或成分，component）的有序集合，列表中既可以有向量也可以有矩阵等。
+```{r list}
+ls_monks <- list(name = c("Wukong Sun", "Sanzang Tang", "Wuneng Zhu", "Wujing Sha"),
+                   power = c(100, 20, 90, 40),
+                   buddha = c(TRUE, TRUE, FALSE, FALSE))
+
+ls_monks
+```
+
+## 数据框
+数据框（Data Frame）是一种特殊的列表，其中所用元素长度都相等，列表中的每个元素都可以看作一列，每个元素的长度可以看作行数。
+
+在Excel中:
+
+<img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/excel-r1.png' width = '60%'>
+
+在R中，使用`data.frame()`创建数据框
+
+```{r dataframe}
+df_toy <- data.frame(female = c(0,1,1,0),
+           age = c(29, 39, 38, 12),
+           name = c("Iron Man", "Black Widow", "Captain Marvel", "Captain America"))
+
+df_toy
+```
+
+在Rstudio中:
+
+<img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/excel-r2.png' width = '60%'>
+
+
+## 时间——lubridate
+1. 实时获取日期型数据和日期时间型数据
+2. 自定义生成公式化的日期数据
+3. 实现日期型数据和日期时间型数据的转化
+4. 列出提取Date类中的年月日时分秒等元素
 
 `as.POSIXct` (numeric input), `as.POSIXlt` (character input)
-
+其中POSIXct是整数存储、POSIXlt是列表存储
 ```{r time, exercise}
-Sys.time()
+Sys.time() # 获取当前时间
+today()   # 获取当日的 年月日
+now()  # 获取当日的 年月日 时分秒  时区
+# CST为操作时电脑ip所在的时区
 
 # The full pack
 time1 <- Sys.time()
@@ -209,11 +303,13 @@ time2$wday # week of the day
 ```{r time-solution}
 Sys.Date()
 date1 <- as.Date("2019-01-02")
+class(date1)  # 查看数据类型
 ```
 
 ## 时间处理包 `lubridate`一览
 
 ### 不同格式的数据
+构建时间需要字符数据，即ymd、mdy、dmy，这部分的三个函数识别的格式可以是`-`分割，也可以是`/`分割的
 
 ```{r timeRecord}
 library(lubridate)
@@ -255,61 +351,6 @@ semester/months(1)
 ```
 
 
-## 矩阵 = 多重向量
-
-<img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/matrix.gif' width = '60%'>
-
-在R中创建矩阵
-
-```{r matrixR}
-A <- matrix(-8:7, ncol = 4)
-A
-A[2, 3]
-```
-
-
-## Data.frame: Excel类的数据
-
-"电子表格"
-
-在Excel中:
-
-<img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/excel-r1.png' width = '60%'>
-
-在R中:
-
-```{r dataframe}
-df_toy <- data.frame(female = c(0,1,1,0),
-           age = c(29, 39, 38, 12),
-           name = c("Iron Man", "Black Widow", "Captain Marvel", "Captain America"))
-
-df_toy
-```
-
-在Rstudio中:
-
-<img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/excel-r2.png' width = '60%'>
-
-## 列表和数组: 数据链
-
-```{r list}
-ls_monks <- list(name = c("Wukong Sun", "Sanzang Tang", "Wuneng Zhu", "Wujing Sha"),
-                   power = c(100, 20, 90, 40),
-                   buddha = c(TRUE, TRUE, FALSE, FALSE))
-
-ls_monks
-```
-
-```{r array}
-# 创建两个长度不同的向量。
-向量1 <- c(5,9,3)
-向量2 <- c(10,11,12,13,14,15)
-
-# 把这些向量输入到数组中。
-结果 <- array(c(vector1,vector2),dim = c(3,3,2))
-result
-```
-
 ## 合并数据
 
 ### 示例数据
@@ -328,14 +369,14 @@ gapminder
 问: 假设我们分别有两个数据，亚洲和欧洲（如何有？），我们如何把它们合并成一个数据呢？
 
 ```{r ex_append, exercise = TRUE, exercise.eval = TRUE}
-gapminder_asia <- gapminder[gapminder$continent s "Asia", 1:2]
+gapminder_asia <- gapminder[gapminder$continent == "Asia", 1:2]
 gapminder_europe <- gapminder[gapminder$continent == "Europe", 1:2]
 ```
 
 ```{r ex_append-solution}
 library(dplyr)
 
-gapminder_eurasia <- bind_rows(gapminder_asia, gapminder_europe)
+gapminder_eurasia <- bind_rows(gapminder_asia, gapminder_europe) #按行连接，不需要列名相同
 ```
 
 ### 合并列
@@ -350,24 +391,32 @@ gapminder_year <- gapminder$year
 ```
 
 ```{r ex_columnBind-solution}
-bind_cols(gapminder_country, gapminder_year)
+bind_cols(gapminder_country, gapminder_year) #按列结合时需要行名相同
 ```
 
-### 基于索引的合并
-
-问: 我该怎样把两个数据集合并在一起？
+### jion函数
 
 <img src='https://raw.githubusercontent.com/sammo3182/drhur/master/inst/tutorials/playing/images/join.png' width = '95%'>
+
+1. 左连接（left_jion):保留x中的所有观测,如果x中的key变量,在y中有多个同样的key,那么所有的结合可能都会罗列出来
+```{r left_jion, eval=FALSE}
+left_join(x, y, by = "key")
+```
+
+2. 右连接(right_jion):保留 y 中的所有观测
+```{r right_jion, eval=FALSE}
+right_join(x, y, by = "key")
+```
+
 
 ```{r ex_join, exercise = TRUE}
 gapminder_country <- select(gapminder, country, year)
 gapminder_year <- select(gapminder, year, pop)
 ```
-
+问: 我该怎样把两个数据集合并在一起？
 ```{r ex_join-solution}
 gapminder_countryYear<- left_join(gapminder_country, gapminder_year)
 ```
-
 
 ## 数据输出
 
