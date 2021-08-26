@@ -1,14 +1,14 @@
 ---
-标题: "Dr.Hu的R语言研习会"
-输出:
+title: "Learning R with Dr. Hu"
+output: 
   learnr::tutorial:
     progressive: true
     allow_skip: true
-运行时间: shiny_prerendered
+runtime: shiny_prerendered
 ---
 
 ```{r setup, include=FALSE}
-library(learnr)
+# library(learnr)
 library(tidyverse)
 library(lubridate) #时间数据处理
 library(gapminder) 
