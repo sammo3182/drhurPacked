@@ -8,7 +8,7 @@
 ---
 
 ```{r setup, include=FALSE}
-#library(learnr)
+library(learnr)
 library(tidyverse)
 library(lubridate) #时间数据处理
 library(gapminder) 
@@ -18,7 +18,7 @@ library(gapminder)
 
 ## 技能
 
-1.  输入／输出数据
+1.  输入/输出数据
 2.  保存数据
 3.  合并数据
 
@@ -43,8 +43,6 @@ library(gapminder)
 ```
 
 ### 另一个赋值运算符
-
-=
 
 为什么是 `<-` 而不是 `=`
 
@@ -187,7 +185,7 @@ x <- factor(c(1, 2, 2, 3), labels = c("Apple", "Pear", "Orange"))
 levels(x)
 ```
 
-### 水平(Levels)和标签(Lables)?
+### 水平(Levels)和标签(Lables)
 
 ```{r level, exercise = TRUE}
 x <- factor(c(1, 2, 2, 3), labels = c("Apple", "Pear", "Orange"))
