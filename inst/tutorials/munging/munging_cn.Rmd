@@ -1,10 +1,10 @@
 ---
-标题: "Dr.Hu的R语言研习会"
-输出:
+title: "Dr. Hu's R Workshop"
+output: 
   learnr::tutorial:
     progressive: true
     allow_skip: true
-运行时间: shiny_prerendered
+runtime: shiny_prerendered
 ---
 
 
@@ -39,18 +39,17 @@ gapminder
 
 ### 了解数据
 ```{r glimpse, exercise = TRUE}
-head(gapminder, n = 6)
-
+head(gapminder, n = 6) # 查看数据框中的前6行
 
 ## 系统的视角
-str(gapminder)
+str(gapminder)  #查看数据框当中有哪些变量以及变量的类型：
 ```
 
 ### 专业的理解
 
 嗨，我是一名专家~ 我想从系统的视角了解数据, 例如找到
 
-* 观察体数量
+* 观察数据大小
 * 变量的名字及数量
 * 或者整个数据帧的结构
 
@@ -59,10 +58,10 @@ gapminder
 ```
 
 ```{r systemView-solution}
-nrow(gapminder)
-ncol(gapminder)
-names(gapminder)
-str(gapminder)
+nrow(gapminder) # 获取数据的行数
+ncol(gapminder) # 获取数据的列数
+names(gapminder) # 获取变量名/列名
+str(gapminder) # 获取变量名、变量名类型、行数、列数
 ```
 
 
@@ -71,19 +70,18 @@ str(gapminder)
 问: 给我讲讲数据集中的人口变量, 比如说, 我们有多少个国家的人口数据, 平均值是多少, 哪个国家的人口最多／最少, 还有其他内容! 对了,  `pop` 被保存成了什么形式呢？
 
 ```{r variable, exercise = TRUE}
-head(gapminder$year, n = 10)
+head(gapminder$year, n = 10) #查看年份前10行
 ```
 
 ```{r variable-solution}
-mean(gapminder$year, na.rm = TRUE)
-median(gapminder$year)
-min(gapminder$year)
-max(gapminder$year)
-length(gapminder$year)
-summary(gapminder$year)
-
-class(gapminder$gdpPercap)
-typeof(gapminder$gdpPercap)
+mean(gapminder$year, na.rm = TRUE) #求取年份的平均值，na.rm = TRUE表示忽略NA
+median(gapminder$year) #求取年份的中间值
+min(gapminder$year) #求取年份的最小值
+max(gapminder$year) #求取年份的最大值
+length(gapminder$year) #求取年份的长度（此处为行数）
+summary(gapminder$year) #获取年份的上述所有信息
+class(gapminder$gdpPercap) #查看年份结构：vector、matrix、array、dataframe、list
+typeof(gapminder$gdpPercap) #查看年份元素类型
 ```
 
 ## 更进一步
@@ -147,9 +145,9 @@ gapminder
 
 ```{r ex_arrange-solution}
 gapminder %>%
-  arrange(pop)
+  arrange(pop) # arrange函数用于排序，此处为按照人口规模从小到大进行排序
 
-arrange(gapminder, desc(pop))
+arrange(gapminder, desc(pop)) #此处为按照人口规模进行降序排列
 ```
 
 ### "给我一些数字"!
@@ -213,8 +211,8 @@ gapminder %>%
 
 ```{r ex_filter-solution}
 gapminder %>%
-  filter(year == 2007) %>%
-  arrange(desc(pop))
+  filter(year == 2007) %>% #filter函数筛选出年份为2007年
+  arrange(desc(pop)) #再根据人口规模进行降序排列
 ```
 
 2007年及以前的十年哪个国家的人口数量最多? (提示: 把 `%in%` 当成一个条件)
@@ -231,15 +229,15 @@ gapminder %>%
 
 ```{r ex_select, exercise = TRUE}
 gapminder %>%
-  select(country, year, pop)
+  select(country, year, pop) #选择国家、年份、人口规模
 ```
 
 ```{r ex_select-solution}
 gapminder %>%
-  select(-continent)
+  select(-continent) #去掉大洲
 
 gapminder %>%
-  select(starts_with("co"))
+  select(starts_with("co")) #匹配以“co”开头的名称
 ```
 
 ### 连击大招
@@ -267,7 +265,7 @@ gapminder %>%
 
 ```{r ex_mutate, exercise = TRUE}
 gapminder %>%
-  mutate(gdp = pop * gdpPercap) %>%
+  mutate(gdp = pop * gdpPercap) %>% #可根据已有变量添加新的变量，将新添加的列到已有列的末尾
     select(country, pop, gdpPercap, gdp)
 ```
 
@@ -277,7 +275,7 @@ gapminder %>%
 
 ```{r ex_batch, exercise = TRUE}
 gapminder %>%
-  mutate_if(is.double, round, digits = 0)
+  mutate_if(is.double, round, digits = 0) #mutate_if对数据进行判断，如果是T，则对其进行四舍五入操作
 ```
 
 ### 重要笔记
