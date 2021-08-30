@@ -1,18 +1,18 @@
 ---
-标题: "Dr.Hu的R语言研习会"
-输出:
+title: "Dr. Hu's R Workshop"
+output: 
   learnr::tutorial:
     progressive: true
     allow_skip: true
     css: css/styles.css
-运行时间: shiny_prerendered
+runtime: shiny_prerendered
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 library(learnr)
-library(ggthemes)
+library(ggthemes) 
 library(scales)
 library(gt)
 library(modelsummary)
@@ -154,8 +154,8 @@ m_cyl <- lm(mpg ~ wt * cyl, data = mtcars)
 ## 从三个例子中学习
 
 1. Gapminder 2007 (点状图)
-1. 新冠病毒致死率 (柱状图)
-1. 新冠病毒潜伏期(扇形图)
+2. 新冠病毒致死率 (柱状图)
+3. 新冠病毒潜伏期(扇形图)
 
 ```{r goal-plots, results="hide", out.width="100%", echo=FALSE}
 if (!require(ggplot2)) install.packages("ggplot2")
@@ -163,33 +163,33 @@ if (!require(scales)) install.packages("scales")
 if (!require(ggthemes)) install.packages("ggthemes")
 if (!require(gapminder)) install.packages("gapminder")
 
-library(ggplot2) # major function
-library(ggthemes) # outlook
-library(scales) # scale of the axes
-library(gapminder) # data
+library(ggplot2) #主要绘图工具
+library(ggthemes) #ggthemes是ggplot2的一个扩展包，提供一些额外的themes、geoms、scales。
+library(scales)
+library(gapminder) 
 
-gapminder_2007 <- filter(gapminder, year == 2007)
+gapminder_2007 <- filter(gapminder, year == 2007) #选出年份为2007年的数据
 
 ggplot(gapminder_2007) +
   geom_point(aes(x = gdpPercap, y = lifeExp, size = pop,
                  color = continent),
-             alpha = 0.5)
+             alpha = 0.5) #分别以人均GDP和生命预期为横纵轴，点的大小表示人口规模，点的颜色表示所在大洲，透明度为0.5
 
 ggplot(cfr_china, aes(x=age, y=cfr, group=1)) +
-  geom_line() +
-  geom_hline(yintercept = 0.01 * 2.3, linetype="dashed", alpha=0.5) +
-  geom_bar(aes(width=cases/10000, fill=age), stat = "identity", position = "identity") +
-  geom_text(aes(label=paste0(cfr*100,"%")), family="Palatino", size=3, nudge_y = 0.04) +
+  geom_line() + #折线图
+  geom_hline(yintercept = 0.01 * 2.3, linetype="dashed", alpha=0.5) + #添加横线
+  geom_bar(aes(width=cases/10000, fill=age), stat = "identity", position = "identity") + #柱状图
+  geom_text(aes(label=paste0(cfr*100,"%")), family="Palatino", size=3, nudge_y = 0.04) + #添加文本，其中family表示字体，size为字体大小
   geom_text(aes(label=paste0("(",deaths,"/",cases,")")), family="Palatino", size=3, nudge_y = 0.03) +
   scale_y_continuous(labels = percent) +
   scale_fill_tableau(palette = "Classic 10 Medium") +
   labs(title = "COVID-19 Case Fatality Rate (CFR) by Age Groups",
-       subtitle = "Among 44,672 confirmed cases in China through February 11\nOverall CFR = 2.3% (dotted line)",
+       subtitle = "Among 44,672 confirmed cases in China through February 11\nOverall CFR = 2.3% (dotted line)", #添加标题
        x = "Age Group", y = NULL,
        caption = "Source: Characteristics of and Important Lessons From the Coronavirus Disease 2019 (COVID-19) Outbreak in China:\nSummary of a Report of 72314 Cases From the Chinese Center for Disease Control and Prevention. Wu Z, McGoogan JM. JAMA. 2020\nhttps://jamanetwork.com/journals/jama/fullarticle/2762130 and http://weekly.chinacdc.cn/en/article/id/e53946e2-c6c4-41e9-9a9b-fea8db1a8f51") +
   theme_minimal(base_size = 14, base_family = "Palatino") +
   theme(plot.caption = element_text(face = "italic", size=6),
-        legend.position = "none")
+        legend.position = "none") #主题
 
 
 ggplot(incubation_data, aes(ymax = svalue, ymin = 0, xmax = 2, xmin = 1, fill = sname)) +
@@ -200,7 +200,7 @@ ggplot(incubation_data, aes(ymax = svalue, ymin = 0, xmax = 2, xmin = 1, fill = 
   scale_fill_few(palette = "Medium") +
   scale_color_few(palette = "Medium") +
   geom_text(aes(x = 0, y = 0, label=stext, colour=sname), size=4, family="Palatino") +
-  facet_wrap(~sname, ncol = 3) +
+  facet_wrap(~sname, ncol = 3) + #分面
   guides(fill=FALSE, colour=FALSE) +
   labs(title="COVID-19 Incubation Time",
        subtitle = "Time before infected person becomes symptomatic\n (percentiles and mean) ",
@@ -572,12 +572,12 @@ likert(df_likert) %>%
 ```
 
 ```{r likert-solution}
-likert(df_likert) %>%
+ likert(df_likert) %>%
   plot(
     type = "heat",
     low.color = "white",
     high.color = "blue",
-    text.color = "black",
+    text.color = "black", 
     text.size = 4,
     wrap = 50
   )
@@ -595,14 +595,14 @@ likert(df_likert) %>%
 `dotwhisker` ![](http://cranlogs.r-pkg.org/badges/grand-total/dotwhisker)
 
 ```{r dotwhisker, exercise = TRUE}
-m1 <- lm(mpg ~ cyl + hp + wt, data = mtcars)
+m1 <- lm(mpg ~ cyl + hp + wt, data = mtcars) #进行OLS回归
 ```
 
 ```{r dotwhisker-solution}
 if (!require(dotwhisker)) install.packages("dotwhisker")
 library(dotwhisker)
 
-dwplot(m1)
+dwplot(m1) #画出胡须图
 ```
 
 
@@ -612,7 +612,7 @@ dwplot(m1)
 m2 <- lm(mpg ~ cyl + hp + wt + hp, data = mtcars)
 m3 <- lm(mpg ~ cyl + hp + wt + hp + am, data = mtcars)
 
-dwplot(list(m1, m2, m3))
+dwplot(list(m1, m2, m3)) #多个回归结果可视化
 ```
 
 ```{r dwMulti-solution}
@@ -625,19 +625,19 @@ dwplot(list(m1, m2, m3)) %>%
       hp = "Horsepower",
       gear = "Gears",
       am = "Manual"
-    )
+    ) #重新命名纵轴
   ) +
-  theme_bw() + xlab("Coefficient Estimate") + ylab("") +
-  geom_vline(xintercept = 0,
-             colour = "grey60",
-             linetype = 2) +
-  ggtitle("Predicting Gas Mileage") +
+  theme_bw() + xlab("Coefficient Estimate") + ylab("") + #添加横轴标题
+  geom_vline(xintercept = 0, #在x=0出添加虚线
+             colour = "grey60", #线的颜色
+             linetype = 2) + #线的类型
+  ggtitle("Predicting Gas Mileage") + #加入标题
   theme(
     plot.title = element_text(face = "bold"),
     legend.justification = c(0, 0),
     legend.position = c(0, 0),
-    legend.background = element_rect(colour = "grey80"),
-    legend.title = element_blank()
+    legend.background = element_rect(colour = "grey80"), 
+    legend.title = element_blank() #去掉灰色网格
   )
 ```
 
